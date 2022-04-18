@@ -21,14 +21,14 @@ describe('client notifications testing', () => {
   beforeEach(() => cy.visit('/notifications'));
 
   //Test if it redirects to the right feature. (Checks if "notifications" is part of the URL)
-  it('should direct to right url', () => {
-    cy.url().should('include','notifications');
+  it('should contain notification board', () => {
+    cy.url().should('include', 'notifications');
   });
 
   //Test if the main notifications component has rendered properly
   it('should contain notification board', () => {
     cy.contains('Notification board');
-    //cy.get('button').click({multiple: true});
+    cy.get('button').click();
   });
 
   //Test if a notification query can be called from API successfully
@@ -213,15 +213,15 @@ describe('client-shorts-feature e2e test', () => {
       });
     });
 
-    // needs seeded data with user with name John
-/*
-    it('should test the search capability', () => {
-      cy.get('#search').type('John{enter}');
-      cy.on('window:alert', (alert)=>{
-        expect(alert).to.contain('Searching');});
-    });
-  });
-*/
+    // needs seeded data with user with name John 
+    /*
+        it('should test the search capability', () => {
+          cy.get('#search').type('John{enter}');
+          cy.on('window:alert', (alert)=>{
+            expect(alert).to.contain('Searching');});
+        });
+      });
+    */
     describe('upload component tests', () => {
       beforeEach(() => {
         cy.visit('/shorts/upload');
