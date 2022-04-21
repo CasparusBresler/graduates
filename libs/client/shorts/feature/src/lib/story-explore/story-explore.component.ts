@@ -61,7 +61,7 @@ export class StoryExploreComponent implements OnInit {
   apifailure = "";
 
   shortId = "cl22e308w0208hcvks42s959n";
-  userId = "69";
+  userId = "123579";
 
   alreadyReported = false;
 
@@ -189,7 +189,9 @@ export class StoryExploreComponent implements OnInit {
   uploadShortToAPI(tags : any) {
     return new Promise((resolve, _) => {
       //mutation to the API for creating a short:
-
+      const vidFormat = this.VideoFileBase64.substring(this.VideoFileBase64.indexOf(",")+1);
+      const thumbFormat = this.ThumbnailFileBase64.substring(this.ThumbnailFileBase64.indexOf(",")+1);
+      
       if (!(this.apollo.client === undefined))
       this.apollo
         .mutate ({
@@ -208,11 +210,9 @@ export class StoryExploreComponent implements OnInit {
                 mutation {
                   createShort(
                       short: { description: "My short", archived: false, shortTag: ${ tags }},
-                      userId: "", 
-                      vidString: "${ this.VideoFileBase64 }", 
-                      vidCat: Videos, 
-                      thumbString: "${ this.ThumbnailFileBase64 }", 
-                      thumbCat:: Files
+                      userId: "123579", 
+                      vidString: "${ vidFormat }", 
+                      thumbString: "${ thumbFormat }", 
                       ) {
                           id,
                           userId,
@@ -220,7 +220,7 @@ export class StoryExploreComponent implements OnInit {
                           link,
                           thumbnail,
                           datePosted,
-                          archive,
+                          archived,
                           user {
                               id,
                               email,
@@ -248,7 +248,20 @@ export class StoryExploreComponent implements OnInit {
     const s = this.uploadfrm.controls['tags'].value;
     const output = s.split('#');
     output.shift();
-    return output;
+
+    let out = "[";
+
+    for (let index = 0; index < output.length; index++) {
+      const element = output[index];
+      
+      out += '{tag: "' +element +'"},' ;
+      
+    }
+    for(const el of output){
+    }
+
+    out += "]";
+    return out;
   }
 
   ValidUpload() : boolean {
@@ -305,6 +318,8 @@ export class StoryExploreComponent implements OnInit {
     this.viewingName = "";
     this.viewingTags = "";
 
+
+    this.viewing = true;
     const getSelectedQ =gql`query {
       getShortById(id: "${s}"){
         user{ 
@@ -329,8 +344,18 @@ export class StoryExploreComponent implements OnInit {
       fetchPolicy: "no-cache" 
     })
     .valueChanges.subscribe((result: any) => {
+<<<<<<< HEAD
       const selectedCard = result.data.getShortById;
       
+=======
+
+      
+
+      // store api output
+      const selectedCard = result.data.getShortById;  
+
+      // change username on selected card
+>>>>>>> 9b0834e1cf23cc03baf681ec5791b1a46b908867
       this.viewingName = selectedCard.user.name;
       for(const a of selectedCard.shortTag){
         this.viewingTags += `#${ a.tag } `;
@@ -358,7 +383,6 @@ export class StoryExploreComponent implements OnInit {
         }
       }
 
-      this.viewing = true;
     });
 
 
@@ -418,7 +442,8 @@ export class StoryExploreComponent implements OnInit {
       if (!(this.apollo.client === undefined))
       this.apollo
         .mutate ({
-          mutation: gql`mutation {
+          mutation: gql`
+          mutation {
             reportShort(report: {shortId: "${ this.shortId }", reason: "${ reason }"}, userId: "${ this.userId }") {
               shortId,
               userId,
